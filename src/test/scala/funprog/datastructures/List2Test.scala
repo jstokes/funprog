@@ -11,6 +11,9 @@ object ListTest extends Specification with ScalaCheck {
   import List2._
   lazy val empty = List2[Int]()
 
+  def isEven(i: Int) = i % 2 == 0
+  def times2(i: Int) = i * 2
+
   "apply should create a list" in {
     List2[Int]() mustEqual Nil
     List2(1) mustEqual Cons(1, Nil)
@@ -33,6 +36,40 @@ object ListTest extends Specification with ScalaCheck {
     setHead(empty, 3) must throwA[UnsupportedOperationException]
     setHead(List2(1), 3) mustEqual List2(3)
     setHead(List2(2, 2, 3), 1) mustEqual List2(1, 2, 3)
+  }
+
+  "drop removes items from the front of a list" in {
+    drop(List2(), 100) mustEqual List2()
+    drop(List2(1, 2, 3), 2) mustEqual List2(3)
+  }
+
+  "init drops the last element in a list" in {
+    init(List2(1)) mustEqual List2()
+    init(List2(1, 2, 3)) mustEqual List2(1, 2)
+  }
+
+  "map takes a List2[A] and a function from A => B and returns a List2[B]" in {
+    List2.map(empty)(times2) mustEqual empty
+    List2.map(List2(1, 2, 3))(times2) mustEqual List2(2, 4, 6)
+  }
+
+  "append takes two lists and creates a single list of the combined elements l1 + l2" in {
+    append(empty, empty) mustEqual empty
+    append(List2(1, 2, 3), List2(4, 5, 6)) mustEqual List2(1, 2, 3, 4, 5, 6)
+  }
+
+  "filter takess a predicate function only keeps the elements that return true" in {
+    filter(empty)(isEven) mustEqual empty
+    filter(List2(1, 2, 3))(isEven) mustEqual List2(2)
+    filter(List2(1, 3, 5))(isEven) mustEqual empty
+    filter(List2(2, 4, 6))(isEven) mustEqual List2(2, 4, 6)
+  }
+
+  "dropWhile removes elements from the head of the list using a predicate function until it returns false" in {
+    dropWhile(empty, isEven) mustEqual empty
+    dropWhile(List2(1, 3, 5), isEven) mustEqual List2(1, 3, 5)
+    dropWhile(List2(2, 4, 6), isEven) mustEqual empty
+    dropWhile(List2(2, 4, 6, 7), isEven) mustEqual List2(7)
   }
 
   implicit def arbList: Arbitrary[List2[Int]] = Arbitrary(
