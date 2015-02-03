@@ -9,3 +9,11 @@ libraryDependencies ++= Seq(
 )
 
 scalacOptions in Test ++= Seq("-Yrangepos")
+
+instrumentSettings
+
+ScoverageKeys.minimumCoverage := 70
+
+ScoverageKeys.failOnMinimumCoverage := false
+
+CoverallsPlugin.coverallsSettings
