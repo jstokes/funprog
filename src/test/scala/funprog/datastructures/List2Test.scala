@@ -72,6 +72,39 @@ object ListTest extends Specification with ScalaCheck {
     dropWhile(List2(2, 4, 6, 7), isEven) mustEqual List2(7)
   }
 
+  "concat 'flattens' a list of lists by appending them all into a single list" in {
+    concat(List2(List2(empty), List2(empty), List2(empty))) mustEqual List2(empty, empty, empty)
+    concat(List2(List2(1), List2(2), List2(3))) mustEqual List2(1, 2, 3)
+  }
+
+  "folding" in {
+    def plus(a: Int, b: Int) = a + b
+    def minus(a: Int, b: Int) = a - b
+
+    "foldRight takes an initial value, and a merging function, and returns a final result" in {
+      foldRight(empty, 0)(plus) mustEqual 0
+      foldRight(List2(1, 2, 3), 0)(plus) mustEqual (1 + (2 + (3 + 0)))
+
+      foldRight(empty, 0)(minus) mustEqual 0
+      foldRight(List2(1, 2, 3), 0)(minus) mustEqual (1 - (2 - (3 - 0))) // 2
+    }
+
+    "foldLeft reduces from right to left" in {
+      foldLeft(empty, 0)(plus) mustEqual 0
+      foldLeft(List2(1, 2, 3), 0)(plus) mustEqual (0 + (3 + (2 + 1)))
+
+      foldLeft(empty, 0)(minus) mustEqual 0
+      foldLeft(List2(1, 2, 3), 0)(minus) mustEqual (((0 - 3) - 2) - 1) // -6
+
+      foldLeft(List2(1, 2, 3), 0)((a, b) => minus(b, a)) mustEqual foldRight(List2(1, 2, 3), 0)(minus)
+    }
+  }
+
+  "reverse flips the order of a list" in {
+    reverse(empty) mustEqual empty
+    reverse(List2(1, 2, 3)) mustEqual List2(3, 2, 1)
+  }
+
   implicit def arbList: Arbitrary[List2[Int]] = Arbitrary(
     arbitrary[List[Int]].map(l => List2(l: _*))
   )
