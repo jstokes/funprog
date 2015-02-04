@@ -101,15 +101,14 @@ object RNG {
     map(nonNegativeInt)(i => i - i % 2)
   }
 
-  def double2(rng: RNG): (Double, RNG) = 
+  def double2(rng: RNG): (Double, RNG) =
     map(nonNegativeInt)(i => i / (Int.MaxValue.toDouble + 1))(rng)
 
   def both[A, B](ra: Rand[A], rb: Rand[B]): Rand[(A, B)] =
     map2(ra, rb)((_, _))
 
-  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = 
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
     fs.foldRight(unit(List.empty[A]))((a, b) => map2(a, b)(_ :: _))
 
-  def ints2(count: Int) = sequence(List.fill(count)(int2))
+  def ints2(count: Int): Rand[List[Int]] = sequence(List.fill(count)(int2))
 }
-
