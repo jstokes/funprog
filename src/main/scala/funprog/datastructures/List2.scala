@@ -16,7 +16,7 @@ object List2 {
   def drop[A](l: List2[A], n: Int): List2[A] = ???
 
   def dropWhile[A](l: List2[A], f: A => Boolean): List2[A] = ???
-  
+
   def reverse[A](l: List2[A]): List2[A] = ???
 
   def init[A](l: List2[A]): List2[A] = ???
