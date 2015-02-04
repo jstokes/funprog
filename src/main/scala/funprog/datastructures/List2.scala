@@ -22,6 +22,7 @@ object List2 {
     case Cons(_, t) => Cons(h, t)
   }
 
+  @annotation.tailrec
   def drop[A](l: List2[A], n: Int): List2[A] =
     if (n <= 0) l
     else l match {
@@ -29,6 +30,7 @@ object List2 {
       case Cons(_, t) => drop(t, n-1)
     }
 
+  @annotation.tailrec
   def dropWhile[A](l: List2[A], f: A => Boolean): List2[A] = l match {
     case Cons(h, t) if f(h) => dropWhile(t, f)
     case _ => l
@@ -40,10 +42,8 @@ object List2 {
     case Cons(h, t) => Cons(h, init(t))
   }
 
-  def map[A,B](l: List2[A])(f: A => B): List2[B] = l match {
-    case Nil => Nil
-    case Cons(h, t) => Cons(f(h), map(t)(f))
-  }
+  def map[A,B](l: List2[A])(f: A => B): List2[B] =
+    foldRight(l, List2[B]())((a, b) => Cons(f(a), b))
 
   def sum(ints: List2[Int]): Int =
     foldLeft(ints, 0)(_ + _)
@@ -54,18 +54,14 @@ object List2 {
   def reverse[A](l: List2[A]): List2[A] =
     foldLeft(l, List2[A]())((a, b) => Cons(b, a))
 
-  def append[A](a1: List2[A], a2: List2[A]): List2[A] = a1 match {
-    case Nil => a2
-    case Cons(h,t) => Cons(h, append(t, a2))
-  }
+  def append[A](a1: List2[A], a2: List2[A]): List2[A] =
+    foldRight(a1, a2)(Cons(_, _))
 
-  def filter[A](l: List2[A])(f: A => Boolean): List2[A] = l match {
-    case Nil => Nil
-    case Cons(h, t) if f(h) => Cons(h, filter(t)(f))
-    case Cons(h, t) => filter(t)(f)
-  }
+  def filter[A](l: List2[A])(f: A => Boolean): List2[A] =
+    foldRight(l, List2[A]())((a, b) => if (f(a)) Cons(a, b) else b)
 
-  def concat[A](l: List2[List2[A]]): List2[A] = foldRight(l, Nil:List2[A])(append)
+  def concat[A](l: List2[List2[A]]): List2[A] =
+    foldRight(l, Nil:List2[A])(append)
 
   def flatMap[A,B](l: List2[A])(f: A => List2[B]): List2[B] =
     concat(map(l)(f))
@@ -76,6 +72,7 @@ object List2 {
     case (Cons(h1, t1), Cons(h2, t2)) => Cons(f(h1, h2), zipWith(t1, t2)(f))
   }
 
+  @annotation.tailrec
   def foldLeft[A,B](l: List2[A], z: B)(f: (B, A) => B): B =
     l match {
       case Nil => z
