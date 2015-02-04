@@ -1,3 +1,4 @@
+
 package funprog.datastructures
 
 import org.scalacheck.Gen
@@ -13,6 +14,8 @@ object ListTest extends Specification with ScalaCheck {
 
   def isEven(i: Int) = i % 2 == 0
   def times2(i: Int) = i * 2
+  def plus(a: Int, b: Int) = a + b
+  def minus(a: Int, b: Int) = a - b
 
   "apply should create a list" in {
     List2[Int]() mustEqual Nil
@@ -53,6 +56,11 @@ object ListTest extends Specification with ScalaCheck {
     List2.map(List2(1, 2, 3))(times2) mustEqual List2(2, 4, 6)
   }
 
+  "flatMap is like map but must also wrap" in {
+    flatMap(empty)(i => List2(empty)) mustEqual empty
+    flatMap(List2(1, 2, 3))(i => List2(i, i)) mustEqual List2(1, 1, 2, 2, 3, 3)
+  }
+
   "append takes two lists and creates a single list of the combined elements l1 + l2" in {
     append(empty, empty) mustEqual empty
     append(List2(1, 2, 3), List2(4, 5, 6)) mustEqual List2(1, 2, 3, 4, 5, 6)
@@ -78,8 +86,6 @@ object ListTest extends Specification with ScalaCheck {
   }
 
   "folding" in {
-    def plus(a: Int, b: Int) = a + b
-    def minus(a: Int, b: Int) = a - b
 
     "foldRight takes an initial value, and a merging function, and returns a final result" in {
       foldRight(empty, 0)(plus) mustEqual 0
@@ -103,6 +109,37 @@ object ListTest extends Specification with ScalaCheck {
   "reverse flips the order of a list" in {
     reverse(empty) mustEqual empty
     reverse(List2(1, 2, 3)) mustEqual List2(3, 2, 1)
+  }
+
+  "sum adds all elements of a list together" in {
+    sum(empty) mustEqual 0
+    sum(List2(1)) mustEqual 1
+    sum(List2(1, 2, 3)) mustEqual 6
+  }
+
+  "take the product of a list of doubles" in {
+    product(List2[Double]()) mustEqual 1
+    product(List2(1.0)) mustEqual 1.0
+    product(List2(2.0, 2.5)) mustEqual 5.0
+  }
+
+  "zipWith combines two lists with a joining function" in {
+    zipWith(empty, empty)(plus) mustEqual empty
+    zipWith(List2(1), List2(1))(plus) mustEqual List2(2)
+    zipWith(List2(1, 2, 3), List2(1, 2))(plus) mustEqual List2(2, 4)
+    zipWith(List2(1, 2), List2(1, 2, 3))(plus) mustEqual List2(2, 4)
+  }
+
+  "hasSubSequence can identity sub sequences" in {
+    "empty never has subsequence" ! prop { as: List2[Int] =>
+      hasSubsequence(empty, as) must beFalse
+    }
+    "empty always is a subsequence of non-empty lists" ! forAll(nonEmptyList) { as: List2[Int] =>
+      hasSubsequence(as, empty) must beTrue
+    }
+    "tail is always a subsequence" ! forAll(nonEmptyList) { as: List2[Int] =>
+      hasSubsequence(as, tail(as)) must beTrue
+    }
   }
 
   implicit def arbList: Arbitrary[List2[Int]] = Arbitrary(
