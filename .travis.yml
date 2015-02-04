@@ -1,4 +1,4 @@
 language: scala
-script: "sbt clean compile coveralls"
+script: "sbt clean compile scalastyle coveralls"
 scala: 
   - 2.10.4
