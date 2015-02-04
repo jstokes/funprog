@@ -5,7 +5,7 @@ import org.scalacheck.Arbitrary._
 import org.specs2.ScalaCheck
 import org.specs2.mutable.Specification
 
-object Chp5Test extends Specification with ScalaCheck {
+object RNGTest extends Specification with ScalaCheck {
   import RNG._
 
   implicit def arbRNG: Arbitrary[RNG] = Arbitrary(arbitrary[Long].map(x => Simple(x)))
