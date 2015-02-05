@@ -1,4 +1,4 @@
-package funprog
+package funprog.state
 
 trait RNG {
   def nextInt: (Int, RNG)
