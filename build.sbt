@@ -13,8 +13,7 @@ scalacOptions ++= Seq(
   "-Xlint",
   "-Ywarn-adapted-args",
   "-Ywarn-value-discard",
-  "-Ywarn-inaccessible",
-  "-Ywarn-dead-code"
+  "-Ywarn-inaccessible"
 )
 
 libraryDependencies ++= Seq(
