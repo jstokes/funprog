@@ -46,5 +46,14 @@ object RNGTest extends Specification with ScalaCheck {
       double3(rng1) mustNotEqual double3(rng2)
       ints(10)(rng1) mustNotEqual ints(10)(rng2)
     }
+
+    "generate non negative even numbers" ! prop { rng: RNG =>
+      val next = nonNegativeEven(rng)._1
+        (next >= 0) && (next % 2 == 0)
+    }
+
+    "ints and ints2 are functionally equivalent" ! prop { rng: RNG =>
+      ints(10)(rng)._1.toSet mustEqual ints2(10)(rng)._1.toSet
+    }
   }
 }
