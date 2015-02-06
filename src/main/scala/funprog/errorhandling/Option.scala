@@ -1,34 +1,35 @@
-package funprog
+package funprog.errorhandling
+
 import scala.{Option => _, Either => _, _}
 
-object Chp4 {
-
-  sealed trait Option[+A] {
-    def map[B](f: A => B): Option[B] = this match {
-      case None => None
-      case Some(x) => Some(f(x))
-    }
-
-    def getOrElse[B >: A](default: => B): B = this match {
-      case None => default
-      case Some(x) => x
-    }
-
-    def flatMap[B](f: A => Option[B]): Option[B] =
-      map(f) getOrElse None
-
-    def orElse[B >: A](ob: => Option[B]): Option[B] =
-      map(Some(_)) getOrElse ob
-
-    def filter(f: A => Boolean): Option[A] =
-      flatMap(a => if (f(a)) Some(a) else None)
+sealed trait Option[+A] {
+  def map[B](f: A => B): Option[B] = this match {
+    case None => None
+    case Some(x) => Some(f(x))
   }
 
+  def getOrElse[B >: A](default: => B): B = this match {
+    case None => default
+    case Some(x) => x
+  }
+
+  def flatMap[B](f: A => Option[B]): Option[B] =
+    map(f) getOrElse None
+
+  def orElse[B >: A](ob: => Option[B]): Option[B] =
+    map(Some(_)) getOrElse ob
+
+  def filter(f: A => Boolean): Option[A] =
+    flatMap(a => if (f(a)) Some(a) else None)
+}
+
+case class Some[+A](get: A) extends Option[A]
+case object None extends Option[Nothing]
+
+object Option {
   def Try[A](a: => A): Option[A] = // scalastyle:ignore
     try Some(a)
     catch { case e: Exception => None }
-  case class Some[+A](get: A) extends Option[A]
-  case object None extends Option[Nothing]
 
   def mean(xs: Seq[Double]): Option[Double] =
     if (xs.isEmpty) None
@@ -74,11 +75,4 @@ object Chp4 {
   def sequence3[A](a: List[Option[A]]): Option[List[A]] = traverse(a)(identity)
   // sequence3(List(Some(3), Some(4), Some(5))) // => Some(List(3, 4, 5))
   // sequence3(List(None, Some(3), Some(4)))    // => None
-
-  trait Either[+E, +A] {
-    def map[B](f: A => B): Either[E, B]
-    def flatMap[EE >: E, B](f: A => Either[EE, B]): Either[EE, B]
-    def orElse[EE >: E, B >: A](b: => Either[EE, B]): Either[EE, B]
-    def map2[EE >: E, B, C](b: Either[EE, B])(f: (A, B) => C): Either[EE, C]
-  }
 }
