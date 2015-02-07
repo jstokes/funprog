@@ -42,12 +42,6 @@ object Option {
     a flatMap(a1 => b map(b1 => f(a1, b1)))
 
   def sequence[A](a: List[Option[A]]): Option[List[A]] = a match {
-    case Some(x) :: xs => sequence(xs) map(x :: _)
-    case None :: xs    => None
-    case Nil           => Some(Nil)
-  }
-
-  def sequence1[A](a: List[Option[A]]): Option[List[A]] = a match {
     case Nil => Some(Nil)
     case h :: t => h flatMap (hh => sequence(t) map (hh :: _))
   }
@@ -55,24 +49,13 @@ object Option {
   def sequence2[A](a: List[Option[A]]): Option[List[A]] =
     a.foldRight[Option[List[A]]](Some(List.empty[A]))((x,y) => map2(x,y)(_ :: _))
 
-  // sequence(List(Some(3), Some(4), Some(5))) // => Some(List(3, 4, 5))
-  // sequence(List(None, Some(3), Some(4)))    // => None
-
   def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = a match {
     case Nil => Some(Nil)
-//    case h :: t => f(h) flatMap(b => traverse(t)(f) map (b :: _))
     case h :: t => map2(f(h), traverse(t)(f))(_ :: _)
   }
-  // assert(traverse(List("1", "2", "foo"))(s => Try(s.toInt)) == None)
-  // assert(traverse(List("1", "2", "3"))(s => Try(s.toInt)) == Some(List(1, 2, 3)))
 
   def traverse2[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] =
     a.foldRight[Option[List[B]]](Some(Nil))((a, b) => b flatMap (bb => f(a) map(_ :: bb)))
-  // assert(traverse2(List("1", "2", "foo"))(s => Try(s.toInt)) == None)
-  // assert(traverse2(List("1", "2", "3"))(s => Try(s.toInt)) == Some(List(1, 2, 3)))
-
 
   def sequence3[A](a: List[Option[A]]): Option[List[A]] = traverse(a)(identity)
-  // sequence3(List(Some(3), Some(4), Some(5))) // => Some(List(3, 4, 5))
-  // sequence3(List(None, Some(3), Some(4)))    // => None
 }
