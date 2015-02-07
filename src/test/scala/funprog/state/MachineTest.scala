@@ -1,4 +1,4 @@
-package funprog
+package funprog.state
 
 import org.specs2.ScalaCheck
 import org.specs2.mutable.Specification
@@ -12,12 +12,14 @@ object CandyTest extends Specification with ScalaCheck {
 
   implicit def arbMachine: Arbitrary[Machine] = Arbitrary {
     for (candies <- arbitrary[Int]; coins <- arbitrary[Int]; locked <- arbitrary[Boolean])
-    yield Machine(locked, candies, coins)
+      yield Machine(locked, candies, coins)
   }
 
   val withCandy = arbitrary[Machine] suchThat (_.candies > 0)
 
-  "inserting a coin into a locked machine will cause it to unlock, if there is any candy left" ! Prop.forAll(withCandy) { (m: Machine) =>
-    simulateMachine(List(Coin)).run(m)._2.locked must beFalse
-  }.pendingUntilFixed
+  "inserting a coin into a locked machine will cause it to unlock, if there is any candy left" !
+    Prop.forAll(withCandy) { (m: Machine) =>
+      val result = simulateMachine(List(Coin)).run(m)._2
+      result.locked must beFalse
+    }.pendingUntilFixed
 }
