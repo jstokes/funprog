@@ -24,14 +24,15 @@ object StateTest extends Specification with ScalaCheck {
     display: Map[LightColor, Mode]
   )
 
-  type ->[A,B] = (A, B)
+  type ->[A, B] = (A, B)
   object Signal {
 
     type SignalState[A] = State[Signal, A]
 
     val default = Signal(
       isOperational = false,
-      display = Map(Red -> Flashing, Yellow -> Off, Green -> Off))
+      display = Map(Red -> Flashing, Yellow -> Off, Green -> Off)
+    )
 
     def enable: State[Signal, Boolean] =
       for {
@@ -65,10 +66,20 @@ object StateTest extends Specification with ScalaCheck {
   "keeps track of stateful operations" in {
     val a = Signal(true, default.display)
     val b = Signal(true, default.display.updated(Red, Off))
-    val c = Signal(true, default.display.updated(Red, Off).updated(Green, Solid))
+    val c = Signal(
+      true,
+      default.display
+        .updated(Red, Off)
+        .updated(Green, Solid)
+    )
     states must beLike {
       case List(a, b, c) => ok
       case _ => ko
     }
+  }
+
+  // TODO, this is not a great example
+  "sequence" in {
+    sequence[Int, Int](List(unit(1), unit(2), unit(3))).run(1)._1 mustEqual List(1, 2, 3)
   }
 }
