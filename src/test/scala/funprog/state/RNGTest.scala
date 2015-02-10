@@ -46,6 +46,5 @@ object RNGTest extends Specification with ScalaCheck {
       double3(rng1) mustNotEqual double3(rng2)
       ints(10)(rng1) mustNotEqual ints(10)(rng2)
     }.pendingUntilFixed
-
   }
 }
