@@ -17,11 +17,7 @@ object List2 {
 
   def dropWhile[A](l: List2[A], f: A => Boolean): List2[A] = ???
 
-  def reverse[A](l: List2[A]): List2[A] = ???
-
   def init[A](l: List2[A]): List2[A] = ???
-
-  def foldLeft[A,B](l: List2[A], z: B)(f: (B, A) => B): B = ???
 
   def map[A,B](l: List2[A])(f: A => B): List2[B] = ???
 
@@ -29,17 +25,23 @@ object List2 {
 
   def product(ds: List2[Double]): Double = ???
 
+  def reverse[A](l: List2[A]): List2[A] = ???
+
   def append[A](a1: List2[A], a2: List2[A]): List2[A] = ???
 
-  def foldRight[A,B](as: List2[A], z: B)(f: (A, B) => B): B = ???
+  def filter[A](l: List2[A])(f: A => Boolean): List2[A] = ???
 
   def concat[A](l: List2[List2[A]]): List2[A] = ???
-
-  def filter[A](l: List2[A])(f: A => Boolean): List2[A] = ???
 
   def flatMap[A,B](l: List2[A])(f: A => List2[B]): List2[B] = ???
 
   def zipWith[A,B,C](a: List2[A], b: List2[B])(f: (A,B) => C): List2[C] = ???
+
+  def foldLeft[A,B](l: List2[A], z: B)(f: (B, A) => B): B = ???
+
+  def foldRight[A,B](as: List2[A], z: B)(f: (A, B) => B): B = ???
+
+  def startsWith[A](l: List2[A], prefix: List2[A]): Boolean = ???
 
   def hasSubsequence[A](l: List2[A], sub: List2[A]): Boolean = ???
 }
