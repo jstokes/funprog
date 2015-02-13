@@ -1,4 +1,3 @@
-
 package funprog.datastructures
 
 import org.scalacheck.Gen
